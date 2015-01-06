@@ -36,6 +36,24 @@ public class Data{
 	public float headDistance;
 }
 
+public class sendData : MonoBehaviour {
+	public IEnumerator sendToServer(string data){
+		WWWForm wwwForm = new WWWForm();
+		wwwForm.AddField("c", "game");
+		wwwForm.AddField("m", "save");
+		wwwForm.AddField("data", data);
+		WWW newWWW = new WWW("http://dev.ullon.com/mrpatch/api/", wwwForm);
+		yield return newWWW;
+		if(newWWW.error != null){
+			Debug.Log(data);
+			Debug.Log("Send Data Error " + newWWW.error);
+		} else {
+			Debug.Log("Return " + newWWW.text);
+		}
+		newWWW.Dispose();
+	}
+}
+
 public class TestController : MonoBehaviour {
 
 	public enum GameStatus{
@@ -225,7 +243,9 @@ public class TestController : MonoBehaviour {
 		newJ.AddField("game_data", j);
 		string newData = newJ.print();
 		//Debug.Log(newData);
-		StartCoroutine(sendData(newData));
+		sendData newClassObj = new global::sendData();
+		StartCoroutine(newClassObj.sendToServer(newData));
+		//StartCoroutine(sendData(newData));
 	}
 
 	IEnumerator sendData(string data){
